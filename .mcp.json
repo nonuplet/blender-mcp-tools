@@ -1,13 +1,12 @@
 {
   "mcpServers": {
     "blender": {
-      "command": "uv",
+      "command": "uvx",
       "args": [
-        "--directory",
-        "../blender_mcp/mcp",
-        "run",
         "--env-file",
-        "../../blender-mcp-tools/.env",
+        ".env",
+        "--from",
+        "git+https://projects.blender.org/lab/blender_mcp.git@v1.0.3#subdirectory=mcp",
         "blender-mcp"
       ]
     }

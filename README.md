@@ -7,6 +7,14 @@ Claude Code から Blender MCP（Blender Lab 版）を経由して Blender を�
 - Blender 5.1～ (Blender Lab版のMCPアドオンが、5.1以降でないと動かないため)
 - python3 (hookで使用、ない場合 `execute_blender_code` がブロックされるため注意)
 - uv (Blender MCPの起動に必要)
+- Blender MCP アドオン (Blender Lab の [Extensions リポジトリ](https://docs.blender.org/manual/en/latest/editors/preferences/extensions.html#repositories) `https://lab.blender.org/` から入れる)
+
+MCP サーバー本体は `.mcp.json` の設定により uvx で git から自動取得されるため、手動で clone する必要はありません。
+
+## バージョン
+
+MCP サーバーは `.mcp.json` でタグ（現在 `v1.0.3`）を固定しています。
+Blender 側アドオンのバージョンと揃えてください。更新時は `.mcp.json` の `@v1.0.3` を書き換えます。
 
 ## 注意点
 
@@ -22,7 +30,7 @@ Claude Code から Blender MCP（Blender Lab 版）を経由して Blender を�
 | パス | 内容 |
 |---|---|
 | `CLAUDE.md` | Claude Code 向けのルール |
-| `.mcp.json` | Blender MCP サーバーの起動設定 |
+| `.mcp.json` | Blender MCP サーバーの起動設定（uvx で git から取得、タグ固定） |
 | `.env.example` | 接続先（HOST / PORT）のテンプレート。`.env` にコピーして使う（`.env` は git 管理外） |
 | `.claude/settings.json` | ツールの権限設定と hook の登録 |
 | `.claude/hooks/check_blender_code.py` | `execute_blender_code` のコードを事前検査する hook |
