@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "mcp__blender__search_api_docs",
+      "mcp__blender__search_manual_docs",
+      "mcp__blender__get_python_api_docs",
+      "mcp__blender__get_objects_summary",
+      "mcp__blender__get_object_detail_summary",
+      "mcp__blender__get_blendfile_summary_datablocks",
+      "mcp__blender__get_blendfile_summary_missing_files",
+      "mcp__blender__get_blendfile_summary_of_linked_libraries",
+      "mcp__blender__get_blendfile_summary_path_info",
+      "mcp__blender__get_blendfile_summary_usage_guess",
+      "mcp__blender__get_screenshot_of_window_as_image",
+      "mcp__blender__get_screenshot_of_area_as_image",
+      "mcp__blender__get_screenshot_of_window_as_json"
+    ],
+    "ask": [
+      "mcp__blender__execute_blender_code",
+      "mcp__blender__jump_to_tab_by_name",
+      "mcp__blender__jump_to_tab_by_space_type",
+      "mcp__blender__jump_to_view3d_object_by_name",
+      "mcp__blender__jump_to_view3d_object_data_by_name",
+      "Bash(python)",
+      "Bash(python *)",
+      "Bash(python3)",
+      "Bash(python3 *)",
+      "Edit(.env.example)",
+      "Edit(.claude/**)",
+      "Edit(CLAUDE.md)"
+    ],
+    "deny": [
+      "mcp__blender__render_thumbnail_to_path",
+      "mcp__blender__render_viewport_to_path",
+      "mcp__blender__execute_blender_code_for_cli",
+      "mcp__blender__get_blendfile_summary_datablocks_for_cli",
+      "mcp__blender__get_blendfile_summary_missing_files_for_cli",
+      "mcp__blender__get_blendfile_summary_of_linked_libraries_for_cli",
+      "mcp__blender__get_blendfile_summary_path_info_for_cli",
+      "mcp__blender__get_blendfile_summary_usage_guess_for_cli",
+      "Read(.env)",
+      "Edit(.mcp.json)",
+      "Edit(//tmp/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__blender__execute_blender_code",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_blender_code.py\"",
+            "timeout": 10,
+            "statusMessage": "Blender コードを検査中..."
+          }
+        ]
+      }
+    ]
+  }
+}
