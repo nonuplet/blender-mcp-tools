@@ -2,6 +2,7 @@
 """.claude/hooks/check_blender_code.py の回帰テスト。
 
 各ケースのコードを hook に標準入力で渡し、判定（pass / ask / deny）が期待どおりかを確認する。
+skill に同梱したスクリプト（.claude/skills/*/scripts/*.py）が pass になることも確認する。
 Blender には接続しない（コードは実行されない）。
 
 実行方法（プロジェクトルートで）:
@@ -14,7 +15,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-HOOK = Path(__file__).resolve().parent.parent / ".claude" / "hooks" / "check_blender_code.py"
+ROOT = Path(__file__).resolve().parent.parent
+HOOK = ROOT / ".claude" / "hooks" / "check_blender_code.py"
+# skill 同梱のスクリプト。execute_blender_code にそのまま渡すので、hook で止められないこと（pass）を確認する。
+SKILL_SCRIPTS = sorted((ROOT / ".claude" / "skills").glob("*/scripts/*.py"))
 
 # (名前, 期待する判定, コード)
 CASES = [
@@ -125,8 +129,10 @@ def run_hook(stdin):
 
 
 def main():
+    skill_cases = [(str(p.relative_to(ROOT / ".claude" / "skills")), "pass", p.read_text(encoding="utf-8"))
+                   for p in SKILL_SCRIPTS]
     results = []
-    for name, expected, code in CASES:
+    for name, expected, code in CASES + skill_cases:
         payload = json.dumps({"tool_name": "mcp__blender__execute_blender_code",
                               "tool_input": {"code": code}})
         results.append((name, expected, *run_hook(payload)))

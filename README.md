@@ -34,9 +34,30 @@ Blender 側アドオンのバージョンと揃えてください。更新時は
 | `.env.example` | 接続先（HOST / PORT）のテンプレート。`.env` にコピーして使う（`.env` は git 管理外） |
 | `.claude/settings.json` | ツールの権限設定と hook の登録 |
 | `.claude/hooks/check_blender_code.py` | `execute_blender_code` のコードを事前検査する hook |
-| `tests/` | hook のテスト |
+| `.claude/skills/bjs-*/` | Babylon.js 向けアセット制作の skill（下記） |
+| `tests/` | hook のテスト（skill 同梱スクリプトが hook を通ることも確認） |
 | `notes/` | 設定の理由などのメモ |
 | `tmp/` | 作業用の一時ファイル（git 管理外） |
+
+## Babylon.js 向けの skill
+
+Web（Babylon.js）で使う 3D アセットを作るための skill です。`/bjs-scene-setup` のように呼び出すか、「Babylon 用に木箱を作って」のように依頼すると使われます。
+
+| skill | 内容 |
+|---|---|
+| `bjs-conventions` | 共通規約（単位・座標系・コレクション・命名・確認用スクリーンショット）。ほかの skill から参照 |
+| `bjs-scene-setup` | シーンの調査と `EXPORT` / `WIP` / `REF` コレクションの準備 |
+| `bjs-prop` | 小物・プロップの生成と仕上げ（原点・トランスフォーム・スムーズ） |
+| `bjs-environment` | 背景・環境の組み立て（リンク複製、当たり判定用メッシュ、タグ付け） |
+| `bjs-uv` | UV 展開（テクスチャの種類に応じた方針決め、モディファイアの適用確認、実寸投影、歪みの検査） |
+| `bjs-material` | glTF に書き出せるマテリアル（PBR、頂点カラー、コード生成テクスチャ、ユーザーが読み込んだ画像、透明） |
+| `bjs-animation` | アニメーション（Action = Babylon の AnimationGroup、NLA への退避） |
+| `bjs-export-check` | 書き出し前の検査と、手動書き出しの設定チェックリスト |
+
+- **GLB の書き出しは手動です。** hook がファイル書き込みを禁止しているため、Claude は書き出し前の検査と設定の案内までを行い、書き出しは Blender の GUI で行います。
+- 各 skill の `scripts/*.py` は `execute_blender_code` に渡すコードです。Claude は冒頭のパラメータ部分だけを書き換えて実行します。
+- Claude が作れるテクスチャは、数値・頂点カラー・コードで生成した画像だけです（画像の読み込みとベイクは hook で禁止）。それ以上の質感が必要な場合は、ユーザーが画像を Blender に読み込み、Claude がマテリアルにつなぎます。
+- 単位系（Metric / Imperial）は、hook が属性名 `system` を一律で禁止しているためスクリプトでは変更できません。必要な場合は GUI で変更します。
 
 ## 安全対策
 
