@@ -36,8 +36,12 @@ description: Babylon.js 向けの小物・プロップ（家具、アイテム�
   - 1 つのメッシュに結合する（描画が軽い。Babylon で個別に動かさないパーツ向け）
   - Empty（`<Name>_root`）の子にする（Babylon で個別に動かす・表示を切り替えるパーツ向け）
 - 原点は最後に整えるので、生成中は気にしなくてよい。
+- 生成コードは `tmp/` に書き、形に依存しない処理は `bjs-conventions` の `snippets.py` の関数をコピーして使う。
+- `bmesh.ops.extrude_face_region` は、押し出し元の面を残す。押し出した面を移動したら、元の面を `bmesh.ops.delete(bm, geom=faces, context="FACES")` で消す（`FACES_ONLY` だと、その面にしか使われていない辺が孤立して残る）。
 
-生成したら `bjs-conventions` の `scripts/set_view.py`（`COLLECTION="WIP"`、`ISO` と `FRONT`）でスクリーンショットを撮り、ユーザーに見せる。
+生成したら、まず `scripts/mesh_check.py` でメッシュの健全性を確認する。閉じた形なら `closed` が `True`、`counts` の `boundary_edges` / `nonmanifold_edges` / `loose_edges` / `degenerate_faces` が 0 になるはず。問題があれば `samples` の位置を手がかりに直す。モディファイア（Bevel など）を付けた場合は、`USE_EVALUATED = True` でも確認する。
+
+続けて `bjs-conventions` の `scripts/set_view.py`（`COLLECTION="WIP"`、`ISO` と `FRONT`）でスクリーンショットを撮り、ユーザーに見せる。
 
 **確認ポイント**: 形・寸法・ポリゴン数を報告し、了承を得るまで次へ進まない。修正を指示されたら、指示された箇所だけを直す。
 
@@ -61,7 +65,7 @@ UV 展開はここでは行わない。テクスチャを使う場合は、マ�
 
 ## 4. EXPORT へ移す（確認ポイント）
 
-ユーザーの了承を得てから、完成したオブジェクトを `WIP` から `EXPORT` へ移す（`EXPORT` にリンクしてから `WIP` からアンリンクする）。
+ユーザーの了承を得てから、`scripts/move_to_collection.py`（`FROM = "WIP"`、`TO = "EXPORT"`）で、完成したオブジェクトを移す。移動先にリンクしてから移動元からアンリンクする。`INCLUDE_CHILDREN = True`（既定）なら子のオブジェクトも一緒に移る。
 
 ## 次の工程
 

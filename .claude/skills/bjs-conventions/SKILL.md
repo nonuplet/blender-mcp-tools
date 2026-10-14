@@ -35,6 +35,24 @@ description: Babylon.js 向け 3D アセットを Blender MCP で作るときの
 
 スクリプトは hook の検査を通る書き方にしてある。パラメータ以外を変更すると、hook に止められることがある（`tests/test_check_blender_code.py` で同梱スクリプトが通ることを確認している）。
 
+## 生成コードを書くとき（スニペット集）
+
+形状の生成など、同梱スクリプトにない処理は、`tmp/` にスクリプトを書いてから `execute_blender_code` で実行する（CLAUDE.md）。
+
+- 形に依存しない処理は、`snippets.py` の関数を**そのままコピーして**使う（`execute_blender_code` はファイルを import できないため）。`tmp/` のスクリプトは単体で完結させる。
+
+| 関数 | 用途 |
+|---|---|
+| `ensure_object_mode()` | オブジェクトモードに戻す。メッシュデータを直接書き換える前に呼ぶ |
+| `select_only(objs)` | 指定したオブジェクトだけを選択・アクティブにする（オペレーターの前に呼ぶ） |
+| `evaluated_triangles(ob)` | モディファイア適用後の三角形数 |
+| `world_bounds(objs)` | ワールド座標のバウンディングボックス |
+| `hex_to_linear(color)` | `#RRGGBB`（sRGB）をリニアの色にする |
+| `topology_counts(bm)` | bmesh の健全性の件数（孤立した辺、開いた縁、非多様体、孤立した頂点、面積 0 の面） |
+
+- 生成・修正のあとは、`bjs-prop` の `scripts/mesh_check.py` でメッシュの健全性を確認する。
+- 同梱スクリプトにしたほうがよい処理（形に依存せず、何度も使うもの）に気付いたら、ユーザーに提案する。
+
 ## 単位とスケール
 
 - 1 Blender unit = 1 m = 1 Babylon.js unit。シーンの単位はメートル法・`scale_length = 1.0` にする。
@@ -87,7 +105,9 @@ Babylon では、Blender のオブジェクト名がそのまま glTF のノー�
 
 ## 確認用スクリーンショット
 
-`scripts/set_view.py` で 3D ビューの視点を切り替えてから、`get_screenshot_of_area_as_image`（`area_ui_type="VIEW_3D"`）で撮る。このスクリプトが変えるのは UI（ビューの向き・ズーム・シェーディング）だけで、シーンのデータは変更しない。
+`scripts/set_view.py` で 3D ビューの視点を切り替えてから、`get_screenshot_of_area_as_image`（`area_ui_type="VIEW_3D"`）で撮る。このスクリプトが変えるのは UI（ビューの向き・ズーム・シェーディング）だけで、シーンのデータは変更しない。最後に再描画もさせる。
+
+MATERIAL 表示に切り替えた直後は、画面左上に「Compiling EEVEE engine shaders」と出て、オブジェクトが描画されないことがある。その場合は、少し時間をおいて `set_view.py` を再実行してから撮り直す。
 
 - 形状の確認: `ISO` と `FRONT`、必要なら `RIGHT` / `TOP`。シェーディングは `SOLID`。
 - マテリアルの確認: `ISO` で、シェーディングは `MATERIAL`。
