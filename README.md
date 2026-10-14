@@ -56,6 +56,7 @@ Web（Babylon.js）で使う 3D アセットを作るための skill です。`/
 
 - **GLB の書き出しは手動です。** hook がファイル書き込みを禁止しているため、Claude は書き出し前の検査と設定の案内までを行い、書き出しは Blender の GUI で行います。
 - 各 skill の `scripts/*.py` は `execute_blender_code` に渡すコードです。Claude は冒頭のパラメータ部分だけを書き換えて実行します。
+- `bjs-conventions/snippets.py` は、生成コード（`tmp/` のスクリプト）に関数をコピーして使うためのスニペット集です（`execute_blender_code` はファイルを import できないため）。
 - Claude が作れるテクスチャは、数値・頂点カラー・コードで生成した画像だけです（画像の読み込みとベイクは hook で禁止）。それ以上の質感が必要な場合は、ユーザーが画像を Blender に読み込み、Claude がマテリアルにつなぎます。
 - 単位系（Metric / Imperial）は、hook が属性名 `system` を一律で禁止しているためスクリプトでは変更できません。必要な場合は GUI で変更します。
 

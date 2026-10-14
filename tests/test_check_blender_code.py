@@ -17,8 +17,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 HOOK = ROOT / ".claude" / "hooks" / "check_blender_code.py"
-# skill 同梱のスクリプト。execute_blender_code にそのまま渡すので、hook で止められないこと（pass）を確認する。
-SKILL_SCRIPTS = sorted((ROOT / ".claude" / "skills").glob("*/scripts/*.py"))
+# skill 同梱のスクリプトとスニペット集。execute_blender_code に渡す（スニペットはコピーして使う）ので、
+# hook で止められないこと（pass）を確認する。
+SKILL_SCRIPTS = sorted((ROOT / ".claude" / "skills").glob("*/scripts/*.py")) + \
+    sorted((ROOT / ".claude" / "skills").glob("*/snippets.py"))
 
 # (名前, 期待する判定, コード)
 CASES = [

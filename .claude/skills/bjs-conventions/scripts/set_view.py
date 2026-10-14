@@ -1,6 +1,7 @@
 """bjs-conventions: 確認用スクリーンショットのため、3D ビューの視点を切り替える。
 
 変更するのは UI（ビューの向き・ズーム・シェーディング）だけで、シーンのデータは変更しない。
+最後にウィンドウを再描画させる。
 実行後に get_screenshot_of_area_as_image(area_ui_type="VIEW_3D") で撮影する。
 """
 import bpy
@@ -65,6 +66,8 @@ r3d.view_location = center
 r3d.view_distance = radius * 2.0 * MARGIN
 space.shading.type = SHADING
 area.tag_redraw()
+# MATERIAL 表示に切り替えた直後は、EEVEE のシェーダーコンパイル待ちで描画が更新されないことがあるため、再描画させる
+bpy.ops.wm.redraw_timer(type="DRAW_WIN_SWAP", iterations=3)
 
 result = {
     "view": VIEW,
