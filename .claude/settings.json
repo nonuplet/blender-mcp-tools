@@ -17,6 +17,8 @@
       "mcp__blender__get_screenshot_of_window_as_json"
     ],
     "ask": [
+      "WebFetch",
+      "WebSearch",
       "mcp__blender__execute_blender_code",
       "mcp__blender__jump_to_tab_by_name",
       "mcp__blender__jump_to_tab_by_space_type",
@@ -43,6 +45,12 @@
       "Edit(.mcp.json)",
       "Edit(//tmp/**)"
     ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "network": {
+      "allowedDomains": []
+    }
   },
   "hooks": {
     "PreToolUse": [
